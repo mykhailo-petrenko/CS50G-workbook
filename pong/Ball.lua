@@ -5,7 +5,7 @@ function Ball:init(x, y, wigth, height)
   self.x = x
   self.y = y
   self.width = wigth
-  self.heigh = height
+  self.height = height
 
   self.dx = 0
   self.fy = 0
@@ -25,5 +25,5 @@ function Ball:update(dt)
 end
 
 function Ball:render()
-  love.graphics.rectangle('fill', self.x - (self.width / 2), self.y - (self.heigh / 2), self.width, self.heigh);
+  love.graphics.rectangle('fill', self.x - (self.width / 2), self.y - (self.height / 2), self.width, self.height);
 end

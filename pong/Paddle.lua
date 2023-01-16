@@ -10,6 +10,8 @@ function Paddle:init(x, y, width, height, UP, DOWN)
 
   self.UP = UP
   self.DOWN = DOWN
+
+  self.direction = 0 -- move direction (1 down, -1 up)
 end
 
 function Paddle:reset()
@@ -19,8 +21,12 @@ end
 function Paddle:update(dt)
   if love.keyboard.isDown(self.UP) then
     self:move(dt, PADDLE_SPEED * -1)
+    self.direction = -1
   elseif love.keyboard.isDown(self.DOWN) then
     self:move(dt, PADDLE_SPEED)
+    self.direction = 1
+  else
+    self.direction = 0
   end
 end
 

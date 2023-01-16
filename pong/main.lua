@@ -1,3 +1,8 @@
+Class = require 'hump.class'
+
+require 'Ball'
+require 'Paddle'
+
 WINDOW_HEIGHT = 1024;
 WINDOW_WIDTH = 1728;
 
@@ -14,7 +19,7 @@ PADDLE_WIDTH = 30
 BALL_SPEED = 0
 BALL_SIZE = 20
 
-ball = nil
+ball = Ball(0, 0, BALL_SIZE, BALL_SIZE)
 
 gameState = nil
 
@@ -23,10 +28,6 @@ function scoreInitState()
   playerB_score = 0
 end
 
-Class = require 'hump.class'
-
-require 'Ball'
-require 'Paddle'
 
 function gameInitState()
   gameState = 'start'
@@ -42,8 +43,6 @@ function gameInitState()
   BALL_HEIGHT = 20
   BALL_WIDTH = 20
 
-
-  ball = Ball(0, 0, BALL_SIZE, BALL_SIZE)
   ball:reset()
 
   paddleA = Paddle(PADDLE_WIDTH/2, WINDOW_HEIGHT/2, PADDLE_WIDTH, PADDLE_HEIGHT, 'w', 's')
@@ -102,17 +101,48 @@ function love.update(dt)
   if (gameState == 'play') then
     ball:update(dx)
     collider()
-  end
 
-  paddleA:update(dt)
-  paddleB:update(dt)
+    paddleA:update(dt)
+    paddleB:update(dt)
+  end
 end
 
 
 function collider()
-  if (ball.y < (ball.heigh /2) or ball.y > (WINDOW_HEIGHT - (ball.heigh /2))) then
+  center = WINDOW_WIDTH / 2
+
+  if (ball.y < (ball.height /2) or ball.y > (WINDOW_HEIGHT - (ball.height /2))) then
     ball.dy = -1 * ball.dy
-  elseif (ball.x < (ball.width /2) or ball.x > (WINDOW_WIDTH - (ball.width /2))) then
-    ball.dx = -1 * ball.dx
   end
+  
+  if (ball.x < center) then
+    if collideWithPaddle(ball, paddleA) then
+      -- reflect from paddle A
+      ball.dx = ball.dx * -1
+    end
+  else
+    if collideWithPaddle(ball, paddleB) then
+      -- reflect from paddle B
+      ball.dx = ball.dx * -1
+    end
+  end
+  
+  if (ball.x < (ball.width * 0.75) or ball.x > (WINDOW_WIDTH - (ball.width * 0.75))) then
+    ball.dx = -1 * ball.dx
+    gameState = 'stop'
+  end
+end
+
+function collideWithPaddle(ball, paddle) 
+  
+  dx = math.abs(ball.x - paddle.x)
+  dy = math.abs(ball.y - paddle.y)
+  maxDx = (paddle.width / 2) + (ball.width / 2)
+  maxDy = (paddle.height / 2) + (ball.height / 2)
+
+  if ((dx <= maxDx) and (dy <= maxDy)) then
+    return true
+  end
+
+  return false
 end
